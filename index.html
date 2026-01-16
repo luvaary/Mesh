@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mesh — Speedcubing Timer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="scramble-area">
+        <div class="scramble-text" id="scrambleText"></div>
+        <button class="btn-copy" id="copyScramble">Copy</button>
+      </div>
+      <div class="controls">
+        <label class="inspection-toggle">
+          <input type="checkbox" id="inspectionToggle">
+          <span>Inspection</span>
+        </label>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="timer-display" id="timerDisplay">0.00</div>
+      <div class="mesh-bar hidden" id="meshBar">
+        <div class="mesh-track">
+          <div class="mesh-segment cross" id="crossSegment">
+            <span class="mesh-label">Cross</span>
+          </div>
+          <div class="mesh-divider" id="divider1" data-index="0"></div>
+          <div class="mesh-segment f2l" id="f2lSegment">
+            <span class="mesh-label">F2L</span>
+          </div>
+          <div class="mesh-divider" id="divider2" data-index="1"></div>
+          <div class="mesh-segment ll" id="llSegment">
+            <span class="mesh-label">LL</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-label">Ao5</span>
+          <span class="stat-value" id="ao5">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Ao12</span>
+          <span class="stat-value" id="ao12">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Ao50</span>
+          <span class="stat-value" id="ao50">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Ao100</span>
+          <span class="stat-value" id="ao100">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Best</span>
+          <span class="stat-value" id="best">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Worst</span>
+          <span class="stat-value" id="worst">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Mean</span>
+          <span class="stat-value" id="mean">-</span>
+        </div>
+      </div>
+    </footer>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h3>Sessions</h3>
+        <button class="btn-icon" id="toggleSidebar">×</button>
+      </div>
+      
+      <div class="session-controls">
+        <select id="sessionType" class="session-type-select">
+          <option value="normal">Normal</option>
+          <option value="cross">Cross-only</option>
+          <option value="f2l">F2L Slow</option>
+          <option value="ll">Last Layer</option>
+        </select>
+        <button class="btn-new-session" id="newSession">New Session</button>
+      </div>
+
+      <div class="session-list" id="sessionList"></div>
+
+      <div class="sidebar-actions">
+        <button class="btn-secondary" id="exportData">Export JSON</button>
+        <button class="btn-secondary" id="importData">Import JSON</button>
+        <input type="file" id="importFile" accept=".json" style="display:none">
+      </div>
+
+      <div class="sidebar-actions">
+        <button class="btn-secondary" id="showSettings">Settings</button>
+        <button class="btn-secondary" id="showGoals">Goal Mode</button>
+        <button class="btn-secondary" id="showAnalytics">Analytics</button>
+      </div>
+    </aside>
+
+    <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+  </div>
+
+  <div class="modal hidden" id="meshInputModal">
+    <div class="modal-content">
+      <h3>Optional Metrics</h3>
+      <div class="metric-group">
+        <label>Cross Moves</label>
+        <input type="number" id="crossMoves" min="0" max="99">
+      </div>
+      <div class="metric-group">
+        <label>Cross Rotations</label>
+        <input type="number" id="crossRotations" min="0" max="3">
+      </div>
+      <div class="metric-group">
+        <label>F2L Rotations</label>
+        <input type="number" id="f2lRotations" min="0" max="6">
+      </div>
+      <div class="metric-group">
+        <label>
+          <input type="checkbox" id="f2lPause">
+          Major F2L Pause
+        </label>
+      </div>
+      <div class="metric-group">
+        <label>
+          <input type="checkbox" id="llRecognition">
+          LL Recognition Delay
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-primary" id="saveMeshMetrics">Save</button>
+        <button class="btn-secondary" id="skipMeshMetrics">Skip</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="settingsModal">
+    <div class="modal-content modal-wide">
+      <h3>Settings</h3>
+      <div class="settings-grid">
+        <label>
+          <input type="checkbox" id="settingMeshBar">
+          Show Mesh Bar after solves
+        </label>
+        <label>
+          <input type="checkbox" id="settingStackmat">
+          Enable Stackmat (experimental)
+        </label>
+      </div>
+      <button class="btn-primary" id="closeSettings">Close</button>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="goalsModal">
+    <div class="modal-content modal-wide">
+      <h3>Goal Mode</h3>
+      <select id="goalSelect">
+        <option value="">None</option>
+        <option value="sub20">Sub-20</option>
+        <option value="sub15">Sub-15</option>
+        <option value="sub10">Sub-10</option>
+        <option value="sub5">Sub-5</option>
+        <option value="sub3">Sub-3</option>
+      </select>
+      <div id="goalTable" class="goal-table"></div>
+      <button class="btn-primary" id="closeGoals">Close</button>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="analyticsModal">
+    <div class="modal-content modal-wide">
+      <h3>Mesh Analytics</h3>
+      <div id="analyticsContent"></div>
+      <button class="btn-primary" id="closeAnalytics">Close</button>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
